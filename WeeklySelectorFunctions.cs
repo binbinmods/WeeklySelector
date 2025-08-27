@@ -7,13 +7,13 @@ using System.Linq;
 using System.IO;
 using static UnityEngine.Mathf;
 using UnityEngine.TextCore.LowLevel;
-using static WeeklySelector.Plugin;
+// using static WeeklySelectorMod.Plugin;
 using System.Collections.ObjectModel;
 using UnityEngine;
 
-namespace WeeklySelector
+namespace WeeklySelectorMod
 {
-    public class WeeklySelectorFunctions
+    public class WeeklySelectorModFunctions
     {
 
 

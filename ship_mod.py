@@ -34,7 +34,7 @@ def zip_mods():
 
 
 if __name__ == "__main__":  
-    mod_dir = "WeeklySelector"
+    mod_dir = "WeeklySelectorMod"
     # config_dir = f"{mod_dir}Configs"    
     content_destination_dir = mod_dir
     

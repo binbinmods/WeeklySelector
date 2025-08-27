@@ -1,31 +1,18 @@
-using BepInEx;
-using BepInEx.Logging;
-using BepInEx.Configuration;
 using HarmonyLib;
 // using static Obeliskial_Essentials.Essentials;
-using System;
-using static WeeklySelector.Plugin;
-using static WeeklySelector.CustomFunctions;
-using static WeeklySelector.WeeklySelectorFunctions;
-using System.Collections.Generic;
-using static Functions;
-using UnityEngine;
+using static WeeklySelectorMod.Plugin;
+// using static WeeklySelectorMod.CustomFunctions;
+// using static WeeklySelectorMod.WeeklySelectorModFunctions;
 // using Photon.Pun;
-using TMPro;
-using System.Linq;
-using System.Xml.Serialization;
-using System.Text.RegularExpressions;
-using System.Reflection;
-using System.Diagnostics;
 // using Unity.TextMeshPro;
 
 // Make sure your namespace is the same everywhere
-namespace WeeklySelector
+namespace WeeklySelectorMod
 {
 
     [HarmonyPatch] // DO NOT REMOVE/CHANGE - This tells your plugin that this is part of the mod
 
-    public class WeeklySelectorPatches
+    public class WeeklySelectorModPatches
     {
         public static bool devMode = false; //DevMode.Value;
         public static bool bSelectingPerk = false;
@@ -37,139 +24,42 @@ namespace WeeklySelector
 
 
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(PerkTree), "CanModify")]
-        public static void CanModifyPostfix(ref bool __result)
-        {
-            if (IsHost() ? EnablePerkChangeWhenever.Value : EnablePerkChangeWheneverMP)
-                __result = true;
-        }
-
-
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(PerkTree), "SelectPerk")]
-        public static void SelectPerkPrefix()
+        [HarmonyPatch(typeof(Globals), "GetWeeklyData")]
+        public static void GetWeeklyDataPrefix(ref int _week)
         {
-            if (IsHost() ? EnablePerkChangeWhenever.Value : EnablePerkChangeWheneverMP)
-                bSelectingPerk = true;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(PerkTree), "SelectPerk")]
-        public static void SelectPerkPostfix()
-        {
-            bSelectingPerk = false;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(AtOManager), "CharInTown")]
-        public static void CharInTownPostfix(ref bool __result)
-        {
-            if (bSelectingPerk)
-                __result = true;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(AtOManager), "GetTownTier")]
-        public static void GetTownTierPostfix(ref int __result)
-        {
-            if (bSelectingPerk)
-                __result = 0;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(SettingsManager), "IsActive")]
-        public static void SettingsManagerIsActivePostfix(ref bool __result)
-        {
-            if (bSelectingPerk)
-                __result = false;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(AlertManager), "IsActive")]
-        public static void AlertManagerIsActivePostfix(ref bool __result)
-        {
-            if (bSelectingPerk)
-                __result = false;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(MadnessManager), "IsActive")]
-        public static void MadnessManagerIsActivePostfix(ref bool __result)
-        {
-            if (bSelectingPerk)
-                __result = false;
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(PerkNode), "OnMouseUp")]
-        public static void OnMouseUpPrefix(ref PerkNode __instance)
-        {
-            if (IsHost() ? EnablePerkChangeWhenever.Value : EnablePerkChangeWheneverMP)
+            if (ChosenWeeklyNumber == 0 || ChooseWeekly.Value == "None")
             {
-                Traverse.Create(__instance).Field("nodeLocked").SetValue(false);
-                __instance.iconLock.gameObject.SetActive(false);
-                bSelectingPerk = true;
+                return;
             }
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(PerkNode), "OnMouseUp")]
-        public static void OnMouseUpPostfix()
-        {
-            bSelectingPerk = false;
+            LogDebug($"GetWeeklyDataPrefix setting weekly to {ChosenWeeklyNumber}");
+            _week = ChosenWeeklyNumber;
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(PerkNode), "OnMouseEnter")]
-        public static void OnMouseEnterPrefix(ref PerkNode __instance)
+        [HarmonyPatch(typeof(AtOManager), "GetWeeklyName")]
+        public static void GetWeeklyNamePrefix(ref int _week)
         {
-            if (IsHost() ? EnablePerkChangeWhenever.Value : EnablePerkChangeWheneverMP)
+            if (ChosenWeeklyNumber == 0 || ChooseWeekly.Value == "None")
             {
-                bSelectingPerk = true;
+                return;
             }
+            LogDebug($"GetWeeklyNamePrefix setting weekly to {ChosenWeeklyNumber}");
+            _week = ChosenWeeklyNumber;
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(PerkNode), "OnMouseEnter")]
-        public static void OnMouseEnterPostfix()
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(AtOManager), "GetWeekly")]
+        public static void GetWeeklyPrefix(ref int __result)
         {
-            bSelectingPerk = false;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(PerkTree), "Show")]
-        public static void ShowPostfix(ref PerkTree __instance, ref int ___totalAvailablePoints)
-        {
-            if (IsHost() ? EnablePerkChangeWhenever.Value : EnablePerkChangeWheneverMP)
+            if (ChosenWeeklyNumber == 0 || ChooseWeekly.Value == "None")
             {
-                __instance.buttonReset.gameObject.SetActive(value: true);
-                __instance.buttonImport.gameObject.SetActive(value: true);
-                __instance.buttonExport.gameObject.SetActive(value: true);
-                __instance.saveSlots.gameObject.SetActive(value: true);
-                __instance.buttonConfirm.gameObject.SetActive(value: true);
-                //__instance.buttonConfirm.Enable();
+                return;
             }
-            return;
+            LogDebug($"GetWeeklyPrefix setting weekly to {ChosenWeeklyNumber}");
+            __result = ChosenWeeklyNumber;
         }
 
-        // 20230401 ModifyPerks fix?
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(PerkNode), "SetIconLock")]
-        public static void SetIconLockPrefix(ref bool _state)
-        {
-            if (IsHost() ? EnablePerkChangeWhenever.Value : EnablePerkChangeWheneverMP)
-                _state = false;
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(PerkNode), "SetLocked")]
-        public static void SetLockedPrefix(ref bool _status)
-        {
-            if (IsHost() ? EnablePerkChangeWhenever.Value : EnablePerkChangeWheneverMP)
-                _status = false;
-        }
 
 
     }

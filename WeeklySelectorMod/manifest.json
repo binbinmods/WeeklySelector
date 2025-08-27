@@ -2,6 +2,6 @@
   "name": "Weekly_Selector",
   "version_number": "1.0.0",
   "website_url": "https://github.com/binbinmods/WeeklySelector",
-  "description": "A mod that ...",
+  "description": "A mod that allows you to choose which weekly challenge to play.",
   "dependencies": ["BepInEx-BepInExPack_AcrossTheObelisk-5.4.23"]
 }

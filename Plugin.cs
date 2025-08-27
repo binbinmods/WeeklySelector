@@ -17,7 +17,7 @@ using System.Collections.Generic;
 // Make sure all your files have the same namespace and this namespace matches the RootNamespace in the .csproj file
 // All files that are in the same namespace are compiled together and can "see" each other more easily.
 
-namespace WeeklySelector
+namespace WeeklySelectorMod
 {
     // These are used to create the actual plugin. If you don't need Obeliskial Essentials for your mod, 
     // delete the BepInDependency and the associated code "RegisterMod()" below.
@@ -45,6 +45,8 @@ namespace WeeklySelector
         public static bool EssentialsInstalled = false;
         public static ConfigEntry<bool> EnableMod { get; set; }
         public static ConfigEntry<bool> EnableDebugging { get; set; }
+        public static ConfigEntry<string> ChooseWeekly { get; set; }
+        public static int ChosenWeeklyNumber = 0;
         // public static ConfigEntry<bool> EnablePerkChangeInTowns { get; set; }
         // public static ConfigEntry<bool> EnablePerkChangeWhenever { get; set; }
         // public static bool EnablePerkChangeInTownsMP { get; set; }
@@ -65,14 +67,46 @@ namespace WeeklySelector
             Log.LogInfo($"{PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} has loaded!");
 
             // Sets the title, default values, and descriptions
-            string modName = "WeeklySelector";
+            string modName = "WeeklySelectorMod";
             EnableMod = Config.Bind(new ConfigDefinition(modName, "EnableMod"), true, new ConfigDescription("Enables the mod. If false, the mod will not work then next time you load the game."));
             EnableDebugging = Config.Bind(new ConfigDefinition(modName, "EnableDebugging"), false, new ConfigDescription("Enables the debugging"));
-            // EnablePerkChangeInTowns = Config.Bind(new ConfigDefinition(modName, "EnablePerkChangeInTowns"), true, new ConfigDescription("Enables you to change perks in any town."));
-            // EnablePerkChangeInTownsMP = true; // = Config.Bind(new ConfigDefinition(modName, "EnablePerkChangeInTownsMP"), true, new ConfigDescription("Enables you to change perks in any town for multiplayer."));
-            // EnablePerkChangeWhenever = Config.Bind(new ConfigDefinition(modName, "EnablePerkChangeWhenever"), false, new ConfigDescription("Enables you to change perks at any time."));
-            // EnablePerkChangeWheneverMP = true; //Config.Bind(new ConfigDefinition(modName, "EnablePerkChangeWheneverMP"), false, new ConfigDescription("Enables you to change perks at any time for Multiplayer."));
+            AcceptableValueList<string> Weeklies = new AcceptableValueList<string>(
+                ["Ylmer1", "Ignidoh1", "Yogger1", "Faeborg1", "Rise1", "Nihr1", "Minotaur1", "Hydra1", "Tulah1",
+                "RustKing1",
+                "Ylmer2", "Ignidoh2", "Yogger2", "Faeborg2", "Rise2", "Nihr2", "Minotaur2", "Hydra2", "Tulah2",
+                "RustKing2", "Halloween", "Christmas", "Lunar Festival",
+                "None"]
+                );
+            ChooseWeekly = Config.Bind(new ConfigDefinition(modName, "ChooseWeekly"), "None", new ConfigDescription("Choose the weekly you would like. Requires a restart of the game to take effect.", Weeklies));
+            Dictionary<string, int> mapWeekliesToNumber = new Dictionary<string, int>()
+            {
+                {"Ylmer1", 1},
+                {"Ignidoh1", 2},
+                {"Yogger1", 3},
+                {"Faeborg1", 4},
+                {"Rise1", 5},
+                {"Nihr1", 6},
+                {"Minotaur1", 7},
+                {"Hydra1", 8},
+                {"Tulah1", 9},
+                {"RustKing1", 10},
+                {"Ylmer2", 11},
+                {"Ignidoh2", 12},
+                {"Yogger2", 13},
+                {"Faeborg2", 14},
+                {"Rise2", 15},
+                {"Nihr2", 16},
+                {"Minotaur2", 17},
+                {"Hydra2", 18},
+                {"Tulah2", 19},
+                {"RustKing2", 20},
+                {"Halloween", 21},
+                {"Christmas", 22},
+                {"Lunar Festival", 23},
+                {"None", 0}
+            };
 
+            ChosenWeeklyNumber = mapWeekliesToNumber[ChooseWeekly.Value];
 
 
             // DevMode = Config.Bind(new ConfigDefinition("DespairMode", "DevMode"), false, new ConfigDescription("Enables all of the things for testing."));
@@ -86,10 +120,10 @@ namespace WeeklySelector
                 RegisterMod(
                     _name: PluginInfo.PLUGIN_NAME,
                     _author: "binbin",
-                    _description: "Skilled NPCs",
+                    _description: "Weekly Selector",
                     _version: PluginInfo.PLUGIN_VERSION,
                     _date: ModDate,
-                    _link: @"https://github.com/binbinmods/SkilledNPCs"
+                    _link: @"https://github.com/binbinmods/WeeklySelectorMod"
                 );
 
             }

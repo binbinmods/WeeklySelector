@@ -1,6 +1,6 @@
 # Weekly Selector
 
-This is a simple mod that does ...
+Allows you to change which weekly is active. Apologies for naming them a bit weirdly. Not sure the best way of doing that.
 
 To change the configs, just open up the config menu by pressing F5 and then changing the appropriate values. Restarting the game is only necessary when enabling/disabling the mod.
 
@@ -11,7 +11,8 @@ This has not been tested in multiplayer yet, so let me know if there are any iss
 | Config          | Default | Explanation                                                                                 |
 | :-------------- | :-----: | :------------------------------------------------------------------------------------------ |
 | EnableMod       |  true   | Enables the mod. Restart the game after changing this.                                      |
-| EnableDebugging |  true   | Enables debugging for if errors occur. Please enable this before submitting a LogOutput.log |
+| EnableDebugging |  false  | Enables debugging for if errors occur. Please enable this before submitting a LogOutput.log |
+| ChooseWeekly    |  None   | Allows you to choose the weekly. Requires game restart to take effect                       |
 
 ## Installation (manual)
 

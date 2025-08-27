@@ -7,10 +7,10 @@ using System.Linq;
 using System.IO;
 using static UnityEngine.Mathf;
 using UnityEngine.TextCore.LowLevel;
-using static WeeklySelector.Plugin;
+using static WeeklySelectorMod.Plugin;
 using System.Collections.ObjectModel;
 
-namespace WeeklySelector
+namespace WeeklySelectorMod
 {
     public class CustomFunctions
     {
